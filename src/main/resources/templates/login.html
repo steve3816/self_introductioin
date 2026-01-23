@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+</head>
+
+<body>
+    <div class="container">
+        <h2>Login</h2>
+
+        <div th:if="${param.error}" style="color: red; text-align: center; margin-bottom: 1rem;">
+            Invalid credentials
+        </div>
+        <div th:if="${param.logout}" style="color: green; text-align: center; margin-bottom: 1rem;">
+            Logged out
+        </div>
+        <div th:if="${param.registered}" style="color: green; text-align: center; margin-bottom: 1rem;">
+            Registration successful! Please login.
+        </div>
+
+        <div class="tabs">
+            <button type="button" class="tab-btn active" onclick="switchTab('password')">Password</button>
+            <button type="button" class="tab-btn" onclick="switchTab('code')">OTP Code</button>
+        </div>
+
+        <!-- Password Login -->
+        <div id="tab-password" class="tab-content active">
+            <form th:action="@{/login}" method="post">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+
+        <!-- OTP Login -->
+        <div id="tab-code" class="tab-content">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="otpUsername" placeholder="Enter username first">
+            </div>
+            <button type="button" onclick="getOtp()" style="background-color: #28a745;">Get Code</button>
+
+            <form th:action="@{/login/code}" method="post" style="margin-top: 1rem;">
+                <input type="hidden" name="username" id="hiddenUsername">
+                <div class="form-group">
+                    <label>Enter Code</label>
+                    <input type="text" name="code" required>
+                </div>
+                <button type="submit">Login with Code</button>
+            </form>
+        </div>
+
+        <div style="text-align: center; margin-top: 1rem;">
+            <a th:href="@{/register}">Don't have an account? Register</a>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+        }
+
+        function getOtp() {
+            const username = document.getElementById('otpUsername').value;
+            if (!username) {
+                alert('Please enter username');
+                return;
+            }
+            document.getElementById('hiddenUsername').value = username;
+
+            fetch('/verification-code?username=' + username, { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("OTP Code:", data.code);
+                    alert(data.message + "\nCode: " + data.code + "\n(Also check console)");
+                })
+                .catch(err => alert("Error: " + err));
+        }
+    </script>
+</body>
+
+</html>
