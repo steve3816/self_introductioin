@@ -22,3 +22,9 @@ target/
 
 # Planning documents
 進度規劃.txt
+
+#gemini
+Gemini.md
+.agents
+整體專案功能.txt
+copilot-commit-message-instructions.md
