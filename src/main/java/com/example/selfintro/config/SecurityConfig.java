@@ -15,10 +15,14 @@ public class SecurityConfig {
                 http
                                 .authorizeHttpRequests((requests) -> requests
                                                 .requestMatchers("/", "/login/code", "/register", "/css/**",
-                                                                "/verification-code")
+                                                                "/verification-code", "/h2-console/**")
                                                 .permitAll()
                                                 .requestMatchers("/public/**").permitAll()
                                                 .anyRequest().authenticated())
+                                .csrf((csrf) -> csrf
+                                                .ignoringRequestMatchers("/h2-console/**"))
+                                .headers((headers) -> headers
+                                                .frameOptions((frame) -> frame.sameOrigin()))
                                 .formLogin((form) -> form
                                                 .loginPage("/login")
                                                 .permitAll())
