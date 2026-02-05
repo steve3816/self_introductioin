@@ -5,16 +5,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import com.example.selfintro.dto.RegisterRequest;
 import com.example.selfintro.service.UserService;
 
+import jakarta.validation.Valid;
+
 @Controller
-public class LoginController {
+public class AuthController {
 
     private final UserService userService;
 
-    public LoginController(UserService userService) {
+    public AuthController(UserService userService) {
         this.userService = userService;
     }
 
@@ -30,10 +33,14 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute RegisterRequest registerRequest, Model model) {
+    public String register(@Valid @ModelAttribute RegisterRequest registerRequest, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("error", result.getFieldError().getDefaultMessage());
+            return "register";
+        }
         try {
             userService.registerUser(registerRequest);
-            return "redirect:/login?registered";
+            return "redirect:/login?registered=true";
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("registerRequest", registerRequest);
