@@ -3,8 +3,10 @@ package com.example.selfintro.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.ui.Model;
 
-import com.example.selfintro.entity.User;
+import com.example.selfintro.dto.RegisterRequest;
 import com.example.selfintro.service.UserService;
 
 @Controller
@@ -22,19 +24,19 @@ public class LoginController {
     }
 
     @GetMapping("/register")
-    public String registerForm(org.springframework.ui.Model model) {
-        model.addAttribute("user", new User());
+    public String registerForm(Model model) {
+        model.addAttribute("registerRequest", new RegisterRequest());
         return "register";
     }
 
     @PostMapping("/register")
-    public String register(@org.springframework.web.bind.annotation.ModelAttribute User user,
-            org.springframework.ui.Model model) {
+    public String register(@ModelAttribute RegisterRequest registerRequest, Model model) {
         try {
-            userService.registerUser(user);
+            userService.registerUser(registerRequest);
             return "redirect:/login?registered";
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
+            model.addAttribute("registerRequest", registerRequest);
             return "register";
         }
     }

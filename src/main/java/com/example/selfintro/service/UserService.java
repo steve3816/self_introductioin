@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.example.selfintro.dto.RegisterRequest;
 import com.example.selfintro.entity.User;
 import com.example.selfintro.repository.UserRepository;
 
@@ -37,11 +38,17 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-    public void registerUser(User user) {
-        if (userRepository.findByUsername(user.getUsername()) != null) {
+    public void registerUser(RegisterRequest request) {
+        if (userRepository.findByUsername(request.getUsername()) != null) {
             throw new RuntimeException("Username already exists");
         }
-        // In a real app, encode password here
+
+        // Create User entity from DTO
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(request.getPassword()); // In a real app, encode password here
+        user.setSelfIntroduction(null); // Will be filled later by user
+
         userRepository.save(user);
     }
 }
