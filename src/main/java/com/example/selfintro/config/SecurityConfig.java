@@ -25,6 +25,7 @@ public class SecurityConfig {
                                                 .frameOptions((frame) -> frame.sameOrigin()))
                                 .formLogin((form) -> form
                                                 .loginPage("/login")
+                                                .defaultSuccessUrl("/profile", true)
                                                 .permitAll())
                                 .logout((logout) -> logout.permitAll());
 
