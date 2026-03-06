@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import com.example.selfintro.util.ValidationUtils;
 
 import com.example.selfintro.dto.RegisterRequest;
 import com.example.selfintro.service.UserService;
@@ -27,6 +28,7 @@ public class AuthController {
     }
 
     @GetMapping("/register")
+
     public String registerForm(Model model) {
         model.addAttribute("registerRequest", new RegisterRequest());
         return "register";
@@ -34,8 +36,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute RegisterRequest registerRequest, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("error", result.getFieldError().getDefaultMessage());
+        if (ValidationUtils.hasErrorsAndPopulate(result, model)) {
             return "register";
         }
         try {
@@ -47,4 +48,5 @@ public class AuthController {
             return "register";
         }
     }
+
 }
